@@ -1,0 +1,33 @@
+name: mani_first_app
+description: A smart price comparison app that redirects users to sellers like Amazon, Flipkart, etc.
+publish_to: "none" # This is a private app, not published to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI and state
+  cupertino_icons: ^1.0.6
+  http: ^0.13.6
+  provider: ^6.1.1
+
+  # Firebase dynamic links
+  firebase_core: ^2.27.0
+  firebase_dynamic_links: ^5.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/   # if you have images
