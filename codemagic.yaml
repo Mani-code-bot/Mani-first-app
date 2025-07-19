@@ -11,5 +11,5 @@ workflows:
           flutter build apk --release
 
     artifacts:
-      - Mani_first/build/app/outputs/flutter-apk/app-release.apk
+      - Mani_first-app/build/app/outputs/flutter-apk/app-release.apk
 
