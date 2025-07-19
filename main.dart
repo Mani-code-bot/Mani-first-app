@@ -8,12 +8,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Price Compare App',
+      title: 'Price Comparison App',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
         appBar: AppBar(title: Text("Welcome")),
-        body: Center(child: Text("Hello, world!")),
+        body: Center(child: Text("Your app is ready!")),
       ),
     );
   }
 }
+
