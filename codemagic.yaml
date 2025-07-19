@@ -1,197 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+workflows:
+  build-android:
+    name: Build Android APK
+    max_build_duration: 60
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+    environment:
+      flutter: stable
+    scripts:
+      - name: Install Dependencies
+        script: flutter pub get
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(PriceComparisonApp());
-}
+      - name: Run Tests (optional)
+        script: flutter test
 
-class PriceComparisonApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'price comparison'  # changed title
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+      - name: Build Release APK
+        script: flutter build apk --release
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _pincodeController = TextEditingController();
-  String userPincode = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Compare Prices')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search for a product (e.g., Tea Cup)',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.search),
-              ),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _pincodeController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: 'Enter your pincode',
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () {
-                    setState(() {
-                      userPincode = _pincodeController.text;
-                    });
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Sample Product Result:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: [
-                  ProductComparisonCard(
-                    imageUrl: 'https://www.gstatic.com/flutter-onestack-prototype/genui/example_1.jpg',
-                    title: 'Modern Ceramic Tea Cup',
-                    sellers: [
-                      SellerInfo(name: 'Amazon', price: '₹249', delivery: '2-3 Days', rating: '4.3', coupon: 'AMZ10', min: '₹199', max: '₹299', predict: '₹269', affiliateUrl: 'https://amzn.to/example1'),
-                      SellerInfo(name: 'Flipkart', price: '₹259', delivery: '3-5 Days', rating: '4.2', coupon: 'FKT15', min: '₹209', max: '₹289', predict: '₹279', affiliateUrl: 'https://fkrt.it/example2'),
-                      SellerInfo(name: 'Meesho', price: '₹235', delivery: '5-7 Days', rating: '4.0', coupon: '', min: '₹199', max: '₹279', predict: '₹250', affiliateUrl: 'https://meesho.link/example3'),
-                    ],
-                    userPincode: userPincode,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProductComparisonCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final List<SellerInfo> sellers;
-  final String userPincode;
-
-  ProductComparisonCard({
-    required this.imageUrl,
-    required this.title,
-    required this.sellers,
-    required this.userPincode,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Image.network(imageUrl, width: 80, height: 80),
-                SizedBox(width: 10), // Fixed syntax: Was Sized: 10)
-                Expanded(
-                  child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Text('Compare from Sellers:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            ...sellers.map<Widget>((seller) => SellerRow(seller: seller, pincode: userPincode)).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SellerInfo {
-  final String name;
-  final String price;
-  final String delivery;
-  final String rating;
-  final String coupon;
-  final String min;
-  final String max;
-  final String predict;
-  final String affiliateUrl;
-
-  SellerInfo({
-    required this.name,
-    required this.price,
-    required this.delivery,
-    required this.rating,
-    required this.coupon,
-    required this.min,
-    required this.max,
-    required this.predict,
-    required this.affiliateUrl,
-  });
-}
-
-class SellerRow extends StatelessWidget {
-  final SellerInfo seller;
-  final String pincode;
-
-  SellerRow({required this.seller, required this.pincode});
-
-  void _launchUrl(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw 'Could not launch $url';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey.shade100,
-      margin: EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        title: Text(seller.name, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Price: ${seller.price} | Delivery: ${seller.delivery} | Rating: ${seller.rating}'),
-            Text('Price Stats - Min: ${seller.min}, Max: ${seller.max}, Predict: ${seller.predict}'),
-            if (seller.coupon.isNotEmpty) Text('Coupon: ${seller.coupon}', style: TextStyle(color: Colors.green)),
-            if (pincode.isNotEmpty) Text('Est. Delivery for $pincode: ${seller.delivery}', style: TextStyle(color: Colors.blue)),
-          ],
-        ),
-        trailing: ElevatedButton(
-          onPressed: () {
-            _launchUrl(Uri.parse(seller.affiliateUrl));
-          },
-          child: Text('Buy Now'),
-        ),
-      ),
-    );
-  }
-}
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
