@@ -1,15 +1,14 @@
 workflows:
   build-android:
-    name: Build Flutter App from Subfolder
+    name: Build Flutter APK from Root
     environment:
       flutter: stable
     scripts:
-      - name: Install & Build from subfolder
-        script: |
-          cd Mani_first
-          flutter pub get
-          flutter build apk --release
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Build APK
+        script: flutter build apk --release
 
     artifacts:
-      - Mani_First/build/app/outputs/flutter-apk/app-release.apk
-
+      - build/app/outputs/flutter-apk/app-release.apk
