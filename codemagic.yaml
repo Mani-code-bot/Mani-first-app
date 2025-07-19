@@ -1,25 +1,17 @@
 workflows:
   build-android:
-    name: Build Android APK
-    max_build_duration: 60
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: '*'
-          include: true
-          source: true
+    name: Build Flutter App from Subfolder
     environment:
       flutter: stable
     scripts:
-      - name: Install Dependencies
+      - name: Move to subfolder
+        script: cd Mani_first
+
+      - name: Install dependencies
         script: flutter pub get
 
-      - name: Run Tests (optional)
-        script: flutter test
-
-      - name: Build Release APK
+      - name: Build APK
         script: flutter build apk --release
 
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - Mani_first/build/app/outputs/flutter-apk/app-release.apk
