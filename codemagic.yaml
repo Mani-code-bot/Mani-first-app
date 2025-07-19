@@ -10,7 +10,7 @@ class PriceComparisonApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'X - Price Comparison App',
+      title: 'Price Comparison', // Changed title
       theme: ThemeData(primarySwatch: Colors.blue),
       home: HomePage(),
       debugShowCheckedModeBanner: false,
