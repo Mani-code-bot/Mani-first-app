@@ -13,6 +13,6 @@ workflows:
     artifacts:
       - Mani_first/build/app/outputs/flutter-apk/app-release.apk
       #abcd
-      # git checkign with commands how it works 
+      # git checkign with 
       
       
